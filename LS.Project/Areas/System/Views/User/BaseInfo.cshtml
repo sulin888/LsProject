@@ -1,0 +1,392 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section styles{
+  <style>
+      .layui-textarea {
+          min-height: 80px;
+      }
+    </style>
+
+}
+
+<script src="~/Content/lib/zTree_v3/js/jquery.ztree.all.min.js"></script>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+
+            <div class="layui-tab layui-tab-card" lay-filter="usertab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" lay-id="0">用户登录信息</li>
+                    <li lay-id="1">用户基本信息</li>
+                    <li lay-id="2">其它信息</li>
+                    <li lay-id="3">教育经历</li>
+                    <li lay-id="4">工作经历</li>
+                </ul>
+                <div class="layui-tab-content" style="height: 420px;width:650px;">
+                    <!--登录信息-->
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-form-item">
+                            <label for="Username" class="layui-form-label">
+                                用户名
+                            </label>
+                            <div class="layui-input-block">
+
+                                <input type="text" id="Username" name="Username"
+                                       autocomplete="off" class="layui-input" value="@Model.Username">
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="Usercode" class="layui-form-label">
+                                用户代码
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" id="Usercode" name="Usercode"
+                                       autocomplete="off" class="layui-input" value="@Model.Usercode">
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="Realname" class="layui-form-label">
+                                真实姓名
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" id="Realname" name="Realname"
+                                       autocomplete="off" class="layui-input" value="@ViewBag.Realname">
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="Rolenames" class="layui-form-label">
+                                角色名称
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" id="Rolenames" name="Rolenames"
+                                       autocomplete="off" class="layui-input" value="@Model.Rolenames" readonly>
+
+
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="Orgnames" class="layui-form-label">
+                                组织机构
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" id="Orgnames" name="Orgnames"
+                                       autocomplete="off" class="layui-input" readonly value="@Model.Orgnames">
+
+
+                            </div>
+
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label for="Jobcode" class="layui-form-label">
+                                    职务
+                                </label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="Jobcode" id="Jobcode" autocomplete="off" class="layui-input" value="@Model.Jobcode">
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label for="Jobcode" class="layui-form-label">
+                                    职级
+                                </label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="Positions" id="Positions" autocomplete="off" class="layui-input" value="@Model.Positions">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="isvisible" class="layui-form-label">
+                                是否可用
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="isenable" value="0" title="禁用" @(!Model.Isenable ? "checked" : "")>
+                                <input type="radio" name="isenable" value="1" title="可用" @(Model.Isenable ? "checked" : "")>
+                            </div>
+                        </div>
+                    </div>
+                    <!--用户基本信息-->
+                    <div class="layui-tab-item">
+                        <div style="position:absolute;top:80px;left:460px;">
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" id="userimg" onerror="this.src='~/Content/images/user.png'" src="@ViewBag.Photo">
+                                <input type="hidden" name="photo" id="photo" value="@ViewBag.Photo" />
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="political" class="layui-form-label">
+                                政治面貌
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="political" name="political"
+                                       autocomplete="off" class="layui-input" value="@ViewBag.Political">
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="maritalstatus" class="layui-form-label">
+                                婚姻状态
+                            </label>
+                            <div class="layui-inline">
+                                <select name="maritalstatus">
+                                    <option value="3" @(ViewBag.Maritalstatus == "3" ? "selected" : "")>未知</option>
+                                    <option value="0" @(ViewBag.Maritalstatus == "0" ? "selected" : "")>未婚</option>
+                                    <option value="1" @(ViewBag.Maritalstatus == "1" ? "selected" : "")>已婚</option>
+                                    <option value="2" @(ViewBag.Maritalstatus == "2" ? "selected" : "")>离异</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="birthdate" class="layui-form-label">
+                                出生日期
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="birthdate" id="birthdate" autocomplete="off" class="layui-input" value="@ViewBag.Birthdate">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="sex" class="layui-form-label">
+                                性别
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="sex" value="0" title="男" @(ViewBag.Maritalstatus == "0" ? "checked" : "") />
+                                <input type="radio" name="sex" value="1" title="女" @(ViewBag.Maritalstatus == "1" ? "checked" : "") .>
+                                <input type="radio" name="sex" value="2" title="未知" @(ViewBag.Maritalstatus == "2" ? "checked" : "") .>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label for="nation" class="layui-form-label">
+                                    民族
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="nation" id="nation" autocomplete="off" class="layui-input" value="@ViewBag.Nation">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label for="placeorigin" class="layui-form-label">
+                                    籍贯
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="placeorigin" id="placeorigin" autocomplete="off" class="layui-input" value="@ViewBag.Placeorigin">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label for="education" class="layui-form-label">
+                                    学历
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="education" id="education" autocomplete="off" class="layui-input" value="@ViewBag.Placeorigin">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label for="telephone" class="layui-form-label">
+                                    电话
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="telephone" id="telephone" autocomplete="off" class="layui-input" value="@ViewBag.Telephone">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label for="university" class="layui-form-label">
+                                    毕业院校
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="university" id="university" autocomplete="off" class="layui-input" value="@ViewBag.University">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label for="specialty" class="layui-form-label">
+                                    专业
+                                </label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="specialty" id="specialty" autocomplete="off" class="layui-input" value="@ViewBag.Specialty">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label for="presentaddress" class="layui-form-label">
+                                现住址
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" name="presentaddress" id="presentaddress" autocomplete="off" class="layui-input" value="@ViewBag.Presentaddress">
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <!--其它信息-->
+                    <div class="layui-tab-item">
+                        <div class="layui-form-item">
+                            <label for="email" class="layui-form-label">
+                                电子邮箱
+                            </label>
+                            <div class="layui-input-block">
+                                <input type="text" name="email" id="email" autocomplete="off" class="layui-input" value="@ViewBag.Email">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="hobby" class="layui-form-label">
+                                爱好
+                            </label>
+                            <div class="layui-input-block">
+                                <textarea class="layui-textarea" name="hobby" id="hobby">@ViewBag.Hobby</textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="perspecialty" class="layui-form-label">
+                                个人特长
+                            </label>
+                            <div class="layui-input-block">
+                                <textarea class="layui-textarea" name="perspecialty" id="perspecialty">@ViewBag.Perspecialty</textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="comprehensive" class="layui-form-label">
+                                综合技能
+                            </label>
+                            <div class="layui-input-block">
+                                <textarea class="layui-textarea" name="comprehensive" id="comprehensive">@ViewBag.Comprehensive</textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="selfevaluation" class="layui-form-label">
+                                自我评价
+                            </label>
+                            <div class="layui-input-block">
+                                <textarea class="layui-textarea" name="selfevaluation" id="selfevaluation">@ViewBag.Selfevaluation</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!--教育经历-->
+                    <div class="layui-tab-item">
+                       
+                        <table class="layui-table" id="tablestu">
+                            <thead>
+                                <tr>
+                                    <th>起止年月</th>
+                                    <th>内容</th>
+                                    <th>专业课程</th>
+                                 
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <!--工作经历-->
+                    <div class="layui-tab-item">
+                       
+                        <table class="layui-table" id="tablework">
+                            <thead>
+                                <tr>
+                                    <th>起止年月</th>
+                                    <th>内容</th>
+                                    <th>主要职责</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <input type="hidden" value="@Model.Id" name="Id" />
+        </form>
+    </div>
+</div>
+<input type="hidden" id="stusuccess" />
+<input type="hidden" id="worksuccess" />
+
+<script>
+    layui.use(['element','form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        $("input,select,textarea").prop("disabled", true);
+        form.render('select');
+        element.on('tab(usertab)', function () {
+            if (this.getAttribute('lay-id') == 3 &&  $("#stusuccess").val()!="1") {
+                lscom.Ajax({
+                    url: '/System/User/GetUserResume',
+                    method: 'get',
+                    data: { userCode: '@Model.Usercode' },
+                    success: function (result) {
+                        var htmlstu = '';
+                        if (result.data.length > 0) {
+                            $.each(result.data, function (k, v) {
+                                if (v.Retype == 0) {
+                                     htmlstu += '<tr>'
+                                    + '<td>'+v.Beginendyear+'</td>'
+                                    + '<td>'+v.Content+'</td>'
+                                    + '<td>'+v.Majorduty+'</td>'
+                                   
+                                    + '</tr>';
+                                }
+                            });
+                        }
+                        $("#stusuccess").val("1");
+
+                        $("#tablestu tbody").append(htmlstu);
+                    }
+                });
+            } else if (this.getAttribute('lay-id') == 4 &&  $("#worksuccess").val()!="1") {
+                lscom.Ajax({
+                    url: '/System/User/GetUserResume',
+                    method: 'get',
+                    data: { userCode: '@Model.Usercode' },
+                    success: function (result) {
+                        var htmlwork = '';
+                        if (result.data.length > 0) {
+                            $.each(result.data, function (k, v) {
+                                if (v.Retype == 1) {
+                                      htmlwork += '<tr>'
+                                    + '<td> '+v.Beginendyear+'</td>'
+                                    + '<td>'+v.Content+'</td>'
+                                    + '<td>'+v.Majorduty+'</td>'
+                                  
+                                    + '</tr>';
+                                }
+
+                            });
+                        }
+
+                        $("#worksuccess").val("1");
+                        $("#tablework tbody").append(htmlwork);
+                    }
+                });
+            }
+        });
+
+    });
+
+
+</script>

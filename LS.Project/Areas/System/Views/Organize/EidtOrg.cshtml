@@ -1,0 +1,142 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section styles{
+    <style>
+        .layui-form-checkbox[lay-skin=primary] span {
+            padding-left: 18px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+            overflow: visible;
+            text-overflow: inherit;
+            white-space: normal;
+        }
+
+        .layui-table td, .layui-table th {
+            min-width: 60px;
+        }
+    </style>
+    <link href="~/Content/lib/formSelects/formSelects-v4.css" rel="stylesheet" />
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="Orgname" class="layui-form-label">
+                    <span class="x-red">*</span>名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Orgname" name="Orgname" lay-verify="required|Orgname"
+                           autocomplete="off" class="layui-input" value="@Model.Orgname">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般不要超过10个汉字
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Orgcode" class="layui-form-label">
+                    <span class="x-red">*</span>代码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Orgcode" name="Orgcode" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input" value="@Model.Orgcode">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    组织机构功能唯一标识
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Orgseq" class="layui-form-label">
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Orgseq" name="Orgseq" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Orgseq">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于调整显示顺序
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    授权角色
+                </label>
+
+                <div class="layui-input-block">
+
+                    <select name="rolecode" xm-select="selectrole" xm-select-search="">
+                     
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    备注
+                </label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入备注" class="layui-textarea">@Model.Remark</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="Parentcode" value="@Model.Parentcode"/>
+        </form>
+    </div>
+</div>
+
+<script>
+  
+    layui.config({
+        base: '/Content/lib/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4'
+    }).use(['form', 'layer','formSelects'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        var formSelects = layui.formSelects;
+        //自定义验证规则
+        form.verify({
+            Orgname: function (value) {
+                if (lscom.strlength(value) > 20) {
+                    return '超过20个字符限制';
+                }
+            }
+        });
+        formSelects.data('selectrole', 'server', {
+            type: 'get',    
+            searchUrl: '/System/Role/GetAllRoleCondition',
+            delay: 500,
+            searchName: 'keyword',
+            searchType: "title",
+            success: function (id, url, searchVal, result) {
+                formSelects.value('selectrole', [@Html.Raw(ViewBag.OrgRoleList)]);
+            }
+
+        });
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+               
+                lscom.Ajax({
+                    url: "/Organize/SaveOrgRole",
+                    data: $(data.form).serialize(),
+                    success: function (data) {
+                       lscom.successCallback(layer,data,true);
+                    }
+                });
+                return false;
+            });
+        
+    });</script>

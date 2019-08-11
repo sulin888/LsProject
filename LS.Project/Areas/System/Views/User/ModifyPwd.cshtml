@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="Username" class="layui-form-label">
+                    用户名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Username" name="Username" disabled
+                           autocomplete="off" class="layui-input" value="@ViewBag.Username">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="Realname" class="layui-form-label">
+                    <span class="x-red">*</span>密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="Userpwd" name="pwd" lay-verify="password"
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    密码必须6到12位，且不能出现空格
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="Userpwd" class="layui-form-label">
+                    <span class="x-red">*</span>确认密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="AgainUserpwd" name="againpwd" lay-verify="password"
+                           autocomplete="off" class="layui-input">
+
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    密码必须6到12位，且不能出现空格
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['element','form', 'layer',], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            password: function (value) {
+                if (!/^[\S]{6,12}$/.test(value)) {
+                    return '密码必须6到12位，且不能出现空格';
+                }
+            }
+        });
+      
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+                lscom.Ajax({
+                    url: "/System/User/ModifyPassWord",
+                    data: $(data.form).serialize(),
+                    success: function (data) {
+                        lscom.successCallback(layer, data, false);
+                        
+                    }
+                });
+                return false;
+            });
+    });
+</script>
+

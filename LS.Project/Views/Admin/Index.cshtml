@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/Content/css/font.css">
+    <link rel="stylesheet" href="/Content/css/xadmin.css">
+    <title>基础框架V1.0</title>
+    <script src="/Content/layui/layui.js" charset="utf-8"></script>
+    <script>
+        var is_remember = false;
+    </script>
+    <script src="/Scripts/xadmin.js" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="index">
+    <!-- 顶部开始 -->
+    <div class="container">
+        <div class="logo">
+            <a href="#">基础框架V1.0</a>
+        </div>
+        <div class="left_open">
+            <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
+        </div>
+        @Html.Partial("_PartialShortcutMenu")
+        <ul class="layui-nav right" lay-filter="">
+
+            <li class="layui-nav-item">
+                <a href="javascript:;"><img src="@ViewBag.UserPhoto" class="layui-nav-img">@ViewBag.UserName</a>
+                <dl class="layui-nav-child">
+                    <!-- 二级菜单 -->
+                    @if ("Admin" != ViewBag.UserName)
+                    {
+                        <dd>
+                            <a onclick="xadmin.open('个人信息','/System/User/BaseInfo',750,620)">个人信息</a>
+                        </dd>
+                        <dd>
+                            <a onclick="xadmin.open('修改密码','/System/User/ModifyPwd',600,300)">修改密码</a>
+                        </dd>
+                    }
+                    <dd>
+                        <a href="/Login/Loginout">退出</a>
+                    </dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item to-index">
+                <a href="/Home">前台首页</a>
+            </li>
+        </ul>
+    </div>
+    <!-- 顶部结束 -->
+    <!-- 中部开始 -->
+    <!-- 左侧菜单开始 -->
+    @Html.Partial("_PartialMenu")
+
+    <!-- 左侧菜单结束 -->
+    <!-- 右侧主体开始 -->
+    <div class="page-content" style="left: 220px;">
+        <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+            <ul class="layui-tab-title">
+                <li class="home">
+                    <i class="layui-icon">&#xe68e;</i>我的桌面
+                </li>
+            </ul>
+            <div class="layui-unselect layui-form-select layui-form-selected" id="tab_right">
+                <dl>
+                    <dd data-type="this">关闭当前</dd>
+                    <dd data-type="other">关闭其它</dd>
+                    <dd data-type="all">关闭全部</dd>
+                </dl>
+            </div>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe src='/Admin/Welcome' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+                </div>
+            </div>
+            <div id="tab_show"></div>
+        </div>
+    </div>
+    <div class="page-content-bg"></div>
+
+    <!-- 右侧主体结束 -->
+    <!-- 中部结束 -->
+    <style id="welcome_style">
+        body.index {
+            background: rgba(0,0,0,0) !important;
+        }
+
+        .container {
+            background: #1a1b20 !important;
+        }
+
+            .container .layui-nav-bar {
+                background: rgb(95, 184, 120) !important;
+            }
+
+            .container .logo a {
+                background: rgba(0,0,0,0) !important;
+            }
+
+            .container .logo a {
+                color: rgb(255, 255, 255) !important;
+            }
+
+        .left-nav {
+            background: #1a1b20 !important;
+        }
+
+            .left-nav a {
+                color: rgba(255, 255, 255, 0.74) !important;
+            }
+
+                .left-nav a:hover, .left-nav a.active {
+                    background: rgb(0, 150, 136) !important;
+                }
+
+                .left-nav a:hover, .left-nav a.active {
+                    color: rgb(255, 255, 255) !important;
+                }
+
+                .left-nav a:hover, .left-nav a.active {
+                    border-color: rgb(4, 86, 78) !important;
+                }
+
+        body {
+            background: rgb(241, 241, 241) !important;
+        }
+    </style>
+
+</body>
+</html>
+

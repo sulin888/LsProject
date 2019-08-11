@@ -1,0 +1,166 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="menuname" class="layui-form-label">
+                    <span class="x-red">*</span>名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="funname" name="menuname" lay-verify="required|menuname"
+                           autocomplete="off" class="layui-input" value="@Model.Menuname">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般不要超过10个汉字
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="menucode" class="layui-form-label">
+                    <span class="x-red">*</span>代码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="menucode" name="menucode" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input" value="@Model.Menucode">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    功能唯一标识，采用数字
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="menuicon" class="layui-form-label">
+                    图标样式
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="menuicon" name="menuicon" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Menuicon">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    可以填写css样式
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="menuseq" class="layui-form-label">
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="menuseq" name="menuseq" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Menuseq">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于调整显示顺序
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="menuurl" class="layui-form-label">
+                    Url
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="menuurl" name="menuurl" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Menuurl">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    菜单访问路径
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="isvisible" class="layui-form-label">
+                    是否可见
+                </label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isvisible" value="0" title="可见" @(!Model.Isvisible ? "checked" : "")>
+                    <input type="radio" name="isvisible" value="1" title="隐藏" @(Model.Isvisible ? "checked" : "")>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="isenable" class="layui-form-label">
+                    是否可用
+                </label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isenable" value="0" title="禁用" @(!Model.Isenable ? "checked" : "")>
+                    <input type="radio" name="isenable" value="1" title="可用" @(Model.Isenable ? "checked" : "")>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    拥有功能
+                </label>
+                <div class="layui-input-block">
+                    @if (ViewBag.FunList != null)
+                    {
+                        foreach (var item in ViewBag.FunList)
+                        {
+                            bool exists = false;
+                            if (ViewBag.MenuFunList != null)
+                            {
+                                foreach (var fun in ViewBag.MenuFunList)
+                                {
+                                    if (fun.Funcode == item.Funcode)
+                                    {
+                                        exists = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            <input name="funcode" lay-skin="primary" type="checkbox" value="@item.Funcode" title="@item.Funname" @(exists ? "checked" : "")>
+
+                        }
+
+                    }
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    备注
+                </label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入备注" class="layui-textarea">@Model.Remark</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="Parentcode" value="@Model.Parentcode" />
+        </form>
+    </div>
+</div>
+
+<script>
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            menuname: function (value) {
+                if (lscom.strlength(value) > 20) {
+                    return '超过20个字符限制';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+               
+                lscom.Ajax({
+                    url: "/Menu/SaveMenu",
+                    data: $(data.form).serialize(),
+                    success: function (data) {
+                        lscom.successCallback(layer,data,true);
+                    }
+                });
+                return false;
+            });
+
+    });</script>

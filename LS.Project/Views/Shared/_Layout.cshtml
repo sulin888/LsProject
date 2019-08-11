@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title </title>
+    <link rel="stylesheet" href="/Content/css/font.css">
+    <link rel="stylesheet" href="/Content/css/login.css">
+    <link rel="stylesheet" href="/Content/css/xadmin.css">
+    <script type="text/javascript" src="/Scripts/jquery.min.js"></script>
+    <script src="/Content/layui/layui.js" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="Content/global.css">
+    @RenderSection("styles", required: false)
+</head>
+<body class="site-home" style="background-color: #eee;" >
+    <div class="layui-header header header-index" summer>
+        <div class="layui-main">
+            <a class="logo" href="/">
+                <h2 style="color:#fff;">基础框架V1.0</h2>
+            </a>
+            <div class="layui-form component" lay-filter="LAY-site-header-component"></div>
+            <ul class="layui-nav">
+                <li class="layui-nav-item ">
+                    <a href="#">文档</a>
+                </li>
+                <li class="layui-nav-item ">
+                    <a href="#">示例</a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs">
+                    <a href="#" target="_blank">社区</a>
+                </li>
+
+                <li class="layui-nav-item">
+                    <a href="javascript:;">周边</a>
+                    <dl class="layui-nav-child">
+                        <dd lay-unselect>
+                            <a href="#" target="_blank">扩展组件</a>
+                        </dd>
+                        <dd lay-unselect>
+                            <a href="#" target="_blank">模板市场 <span class="layui-badge-dot"></span></a>
+                            <hr>
+                        </dd>
+
+                        <dd class="layui-hide-sm layui-show-xs" lay-unselect>
+                            <a href="#" target="_blank">社区交流</a>
+                            <hr>
+                        </dd>
+                        <dd lay-unselect><a href="#" target="_blank">后台模板</a></dd>
+                        <dd lay-unselect><a href="#" target="_blank">即时聊天</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="#">后台模板<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

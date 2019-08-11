@@ -1,0 +1,117 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统管理", ThreeTitle = "组织机构管理" });
+}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-header">
+                    <div class="layui-row">
+                        <div class="layui-col-md9">
+                            <button class="layui-btn" id="btn-expand"><i class="layui-icon">&#xe61a;</i>全部展开</button>
+                            <button class="layui-btn" id="btn-fold"><i class="layui-icon">&#xe619;</i>全部折叠</button>
+                            <button class="layui-btn" onclick="xadmin.open('添加组织机构','/System/Organize/CreateOrg',600,400)"><i class="layui-icon">&#xe608;</i>添加组织机构</button>
+                        </div>
+                        <div class="layui-col-md3" style="text-align:right;">
+                            <div class="layui-inline">
+                                <input type="text" name="organizename" id="organizename" placeholder="请输入机构名称" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="sysorglist" lay-filter="sysorglist"></table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">新增下级</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var funcodearry = [];
+    layui.config({
+        base: '/Content/lib/treetable-lay/'
+    }).extend({
+        treetable: 'treetable'
+    }).use(['table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        var reload = function () {
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'id',
+                treePidName: 'pId',
+                elem: '#sysorglist',
+                url: '/System/Organize/GetAllOrganize?orgname=' + $("#organizename").val(),
+                page: false,
+                cols: [[
+
+                    { type: 'numbers', width: '5%' },
+                    { field: 'name', width: '20%', title: '机构名称' },
+                    { field: 'orgCode', width: '15%', title: '机构代码' },
+                    {
+                        field: 'orgnames', width: '25%', title: '所属角色'
+                    },
+                    { templet: '#auth-state', align: 'center', title: '操作' }
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+        // 渲染表格
+        layer.load(2);
+        reload();
+        //监听行工具事件
+        table.on('tool(sysorglist)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'del') {
+                layer.confirm('确认删除行吗？', function (index) {
+                    //obj.del();
+                    lscom.Ajax({
+                        url: "/System/Organize/DelOrg",
+                        data: { id: data.id },
+                        success: function (data) {
+                            lscom.successSelfCallback(layer,data,reload);
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event == 'edit') {
+                xadmin.open('编辑组织机构', '/System/Organize/EidtOrg?id=' + data.id, 600, 500);
+            } else if (obj.event == "add") {
+                xadmin.open('新增组织机构', '/System/Organize/CreateOrg?code=' + data.orgCode, 600, 500);
+            }
+        });
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#sysorglist');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#sysorglist');
+        });
+        $('#sreach').on("click", function () {
+            reload();
+        });
+    });
+</script>

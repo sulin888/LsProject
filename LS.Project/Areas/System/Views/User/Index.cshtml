@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "用户管理", ThreeTitle = "用户管理" });
+}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-header">
+                    <div class="layui-row">
+                        <div class="layui-col-md9">
+                            <button class="layui-btn" onclick="xadmin.open('添加用户','/System/User/CreateUser',750,620)"><i class="layui-icon">&#xe608;</i>添加用户</button>
+                        </div>
+                        <div class="layui-col-md3" style="text-align:right;">
+                            <div class="layui-inline">
+                                <input type="text" name="usename" id="usename" placeholder="请输入用户名或代码" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="sysuserlist" lay-filter="sysuserlist"></table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 启用|停用模板 -->
+<script type="text/html" id="statusTpl">
+    <input type="checkbox" name="status" value="{{d.Id}}" lay-filter="status" lay-skin="switch" lay-text="启用|停用" {{ d.Isenable== 1 ? 'checked' : ''}}>
+</script>
+<script>
+    layui.use(['table', 'form'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
+        // 渲染表格
+        layer.load(2);
+        table.render({
+            elem: '#sysuserlist',
+            id: "sysuserlist_data",
+            url: '/System/User/GetAllUser',
+            page: false,
+            cols: [[
+                { type: 'checkbox', width: '5%' },
+                { field: 'Username', width: '10%', title: '用户名' },
+                { field: 'Usercode', width: '10%', title: '用户代码' },
+                { field: 'Rolenames', width: '15%', title: '所属角色' },
+                { field: 'Orgnames', width: '15%', title: '所属组织' },
+                { field: 'JobcodeName', width: '10%', title: '职务' },
+                { field: 'PositionsName', width: '10%', title: '职级' },
+                { field: 'Createdate', width: '12%', title: '日期' },
+                {
+                    field: 'Isenable', width: '6%', title: '状态', templet: '#statusTpl'
+                },
+                { templet: '#auth-state', align: 'center', title: '操作' }
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+        //监听行工具事件
+        table.on('tool(sysuserlist)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'del') {
+                layer.confirm('确认删除行吗？', function (index) {
+                    //obj.del();
+                    lscom.Ajax({
+                        url: "/System/User/DelUser",
+                        data: { id: data.Id },
+                        success: function (data) {
+                            lscom.successSelfCallback(layer, data, reload);
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event == 'edit') {
+                xadmin.open('编辑用户', '/System/User/EditUser?id=' + data.Id, 750, 620);
+            }
+        });
+        form.on("switch(status)", function (obj) {
+
+            lscom.Ajax({
+                url: '/System/User/ModifyEnabled',
+                method: 'post',
+                data: { uids: obj.value, enabled: obj.elem.checked },
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {
+                            icon: 1
+                        },
+                            function () {
+                                //关闭当前frame
+                                xadmin.close();
+                            });
+                    }
+                    else {
+                        layer.msg(data.msg, {
+                            icon: 1
+                        });
+                    }
+
+                }
+            });
+        });
+
+        $('#sreach').on("click", function () {
+
+        });
+        function reload() {
+            table.reload('sysuserlist_data', {
+                where: {
+                    'keyword': $("#usename").val()
+                }
+            });
+        }
+    });
+</script>

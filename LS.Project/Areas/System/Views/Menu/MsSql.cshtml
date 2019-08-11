@@ -1,0 +1,208 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统帮助", ThreeTitle = "SQL脚本" });
+}
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <pre class="layui-code" lay-title="MsSql">
+use  LSProject
+go
+--功能表
+create table sys_function
+(
+ id int  primary key  identity(1,1),--主键
+ funcode varchar(20) not null,-- 代码
+ funname nvarchar(20) not null,--功能名称
+ funseq int ,--排序
+ funicon varchar(50) ,--图标css
+ remark nvarchar(100) --备注
+)
+go
+--菜单表
+create table sys_menu
+(
+ id int primary key identity(1,1),--主键
+ menucode varchar(100) not null,--菜单代码
+ parentcode varchar(100) ,--父级菜单
+ menuname nvarchar(50) not null,--菜单名称
+ menuurl varchar(200) not null,--菜单地址
+ menuicon varchar(50) ,--菜单图标
+ menuseq int, --菜单排序
+ isvisible bit  ,--是否可见 0=可见 1=隐藏
+ isenable bit ,--是否可用 0=禁用 1= 可用
+ menulevel int ,--菜单层级
+ createby varchar(36) ,--创建人
+ createdate datetime ,--创建时间
+ remark nvarchar(100) --备注
+)
+go
+--角色表
+create table sys_role
+(
+ id int primary key identity(1,1) ,--主键
+ rolecode varchar(100) not null,--角色代码
+ rolename nvarchar(50) not null,--角色名称
+ roleseq int  ,--排序
+ remark nvarchar(100) ,--备注
+ createby varchar(36) ,--创建人
+ createdate datetime --创建时间
+)
+go
+--组织结构表
+create table sys_organize
+(
+ id  int primary key identity(1,1),--主键
+ orgcode varchar(100) not null,--组织代码
+ orgname nvarchar(50) not null,--组织名称
+ parentcode  varchar(100) not null,--组织父级代码
+ orgseq int ,--排序
+ isdel bit ,--删除 0=未删除  1=删除
+ remark nvarchar(100), --备注
+ createby varchar(36) ,--创建人
+ createdate datetime --创建时间
+)
+go
+--用户表
+create table sys_user
+(
+ id int primary key identity(1,1) ,--主键
+ usercode varchar(100) not null,--用户代码
+ username nvarchar(50) not null,--用户名
+ userpwd varchar(100) not null,--密码
+ jobcode varchar(100) not null,--职务
+ rolenames  nvarchar(200) ,--用户角色名称
+ positions varchar(100) not null,--职级
+ orgnames nvarchar(200),--组织名称
+ configjson nvarchar(4000) ,--用户配置
+ isenable bit ,--是否可用 0=禁用 1= 可用
+ createby varchar(36) ,--创建人
+ createdate datetime --创建时间
+)
+go
+--用户详情表
+create table sys_userinfo
+(
+ id int primary key identity(1,1) ,--主键
+ usercode varchar(100) not null,--用户代码
+ realname nvarchar(100) not null,--真实姓名
+ sex char(1) ,--性别 0=男 1=女 2=未知
+ birthdate  datetime ,--生日
+ nation nvarchar(10) ,--籍贯
+ political nvarchar(10),--政党
+ maritalstatus char(1), --婚姻状态 0=未婚 1=已婚 2=离异 3=未知
+ presentaddress  nvarchar(100) ,--当前住址
+ placeorigin nvarchar(100),--户籍地址
+ education nvarchar(10),--教育程度
+ university nvarchar(50) ,--毕业院校
+ specialty nvarchar(50) ,--专业
+ hobby nvarchar(200) ,--爱好
+ perspecialty nvarchar(200) ,--特长
+ comprehensive nvarchar(200) ,--综合技能
+ telephone varchar(11) ,--电话
+ email varchar(30) ,--邮箱
+ photo varchar(50) ,--头像
+ selfevaluation nvarchar(200) ,--自我评价
+ createby varchar(36) ,--创建人
+ createdate datetime  --创建时间
+)
+go
+--菜单功能表
+create table sys_menufunction
+(
+id int primary key identity(1,1),--主键
+menucode varchar(100) not null,--菜单代码
+funcode varchar(20) not null-- 功能代码
+)
+go
+--角色菜单表
+create table sys_rolemenu
+(
+id int primary key identity(1,1),--主键
+menucode varchar(100) not null,--菜单代码
+rolecode varchar(100) not null ,--角色代码
+funcode varchar(100) not null-- 功能代码
+)
+go
+--组织机构角色表
+create table sys_organizerole
+(
+ id  int primary key identity(1,1), --主键
+ orgcode varchar(100) not null,--组织代码
+ rolecode varchar(100) not null --角色代码
+)
+
+go
+--组织机构用户表
+create table sys_organizeuser
+(
+id int primary key identity(1,1) ,--主键
+orgcode varchar(100) not null,--组织代码
+usercode varchar(100) not null --用户代码
+--userrank int  ,--字典中获取 (经理 主管  员工)
+)
+
+go
+--用户角色表
+create table sys_userrole
+(
+id int primary key identity(1,1),--主键
+usercode varchar(100) not null,--用户代码
+rolecode varchar(100) not null --角色代码
+)
+go
+--字典表
+create table sys_dictionary
+(
+  id int primary key identity(1,1),--主键
+  dcode varchar(30) not null,--字典代码
+  parentcode varchar(30) ,--父级字典代码
+  dname nvarchar(20) ,--字典名称
+  dseq int ,--排序
+  isenable bit ,--是否可用 0=禁用 1= 可用
+  dictype int ,--自定义类型
+  remark nvarchar(200),--备注
+  createby varchar(36) ,--创建人
+  createdate datetime --创建时间
+)
+go
+--日志表
+create table sys_logs
+(
+ id int primary key identity(1,1),--主键
+ logtype int ,--日志类型(建库为int类型，基本上包括 信息、错误、提醒、调试三类)
+ logsource varchar(100) ,--来源
+ logmsg nvarchar(500),--消息
+ createtime datetime --创建时间
+)
+
+--用户概要 简历
+create table sys_userresume
+(
+	 id   int  IDENTITY(1,1) primary key  NOT NULL,
+	 usercode   varchar (100) NULL, --用户code
+	 retype   int  NULL,--类型  0=教育 1=工作
+	 beginendyear   nvarchar (50) NULL,--时间段
+	 content   nvarchar (100) NULL,--内容
+	 majorduty   nvarchar (100) NULL--概要 说明
+)
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['code'], function () {
+        layui.code({
+             about:false
+        });
+    });
+</script>
+

@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>登录超时</title>
+    <link href="@Url.Content("~/Content/customerror.css")" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="cuserror">
+        <div class="boxcontent">
+            <img src="@Url.Content("~/Content/images/timeout.png")" />
+            <div class="msg">登录超时，请&nbsp;<a href="/Login" target="_top">重新登录&gt;&gt;</a><b id="lab_login"></b></div>
+        </div>
+    </div>
+</body>
+<script>
+    var timtoutindex = 5;
+    var timtint = setInterval(function () {
+        document.getElementById("lab_login").innerHTML = timtoutindex + "秒跳转到登陆页面";
+        timtoutindex--;
+        if (timtoutindex == 1) {
+            clearInterval(timtint);
+            window.top.location.href = "/Login";//跳转到登录页面.
+        }
+    }, 1000);
+</script>
+</html>

@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="funname" class="layui-form-label">
+                    <span class="x-red">*</span>名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="funname" name="funname" lay-verify="required|funname"
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般不要超过5个汉字
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="funcode" class="layui-form-label">
+                    <span class="x-red">*</span>代码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="funcode" name="funcode" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    功能唯一标识，一般采用字母
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="funicon" class="layui-form-label">
+                    图标样式
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="funicon" name="funicon" required=""
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    可以填写css样式
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="funseq" class="layui-form-label">
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="funseq" name="funseq" required=""
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于调整显示顺序
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    备注
+                </label>
+                <div class="layui-input-inline">
+                    <textarea name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            funname: function (value) {
+                if (lscom.strlength(value) > 10) {
+                    return '超过10个字符限制';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+               
+                lscom.Ajax({
+                    url: "/Menu/SaveFunction",
+                    data: data.field,
+                    success: function (data) {
+                        lscom.successCallback(layer, data, false);
+                    }
+                });
+                return false;
+            });
+
+    });</script>

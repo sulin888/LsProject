@@ -1,0 +1,111 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统管理",ThreeTitle="字典管理" });
+}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-header">
+                    <div class="layui-row">
+                        <div class="layui-col-md9">
+                            <button class="layui-btn" onclick="xadmin.open('添加字典','/System/Dictionary/CreatDictionary',700,600)"><i class="layui-icon">&#xe608;</i>添加字典</button>
+                        </div>
+                        <div class="layui-col-md3" style="text-align:right;">
+                            <div class="layui-inline">
+                                <input type="text" name="dicname" id="dicname" placeholder="请字典名称或代码" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="dictionarylist" lay-filter="dictionarylist"></table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var funcodearry = [];
+    layui.use(['table'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+
+         table.render({
+             elem: '#dictionarylist',
+              id:"dictionarylist_data",
+                url: '/System/Dictionary/GetDictionary',
+                page: true,
+                cols: [[
+
+                    { type: 'checkbox', width: '5%' },
+                    { field: 'Dname', width: '20%', title: '名称' },
+                    { field: 'Dcode', width: '15%', title: '代码' },
+                    {
+                        field: 'Dictype', width: '10%', title: '类型'
+                    },
+                     {
+                        field: 'Parentcode', width: '15%', title: '父级'
+                    },
+                     {
+                        field: 'Remark', width: '15%', title: '备注'
+                    }, {
+                        field: 'Dseq', width: '5%', title: '排序'
+                    },
+                    { templet: '#auth-state', align: 'center', title: '操作' }
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        // 渲染表格
+        layer.load(2);
+     
+        //监听行工具事件
+        table.on('tool(dictionarylist)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'del') {
+                layer.confirm('确认删除行吗？', function (index) {
+                    //obj.del();
+                    lscom.Ajax({
+                        url: "/System/Dictionary/DelDict",
+                        data: { id: data.Id },
+                        success: function (data) {
+                           lscom.successSelfCallback(layer,data,reload);
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event == 'edit') {
+                xadmin.open('编辑字典', '/System/Dictionary/EidtDictionary?id=' + data.Id, 700, 600);
+            }
+        });
+       
+        $('#sreach').on("click", function () {
+            reload();
+        });
+        function reload() {
+             table.reload("dictionarylist_data",{
+              where: {
+                         'keyword':$("#dicname").val()
+                     }
+            });
+        }
+    });
+</script>

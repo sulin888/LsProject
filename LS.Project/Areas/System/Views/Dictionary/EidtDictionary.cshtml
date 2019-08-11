@@ -1,0 +1,166 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section styles{
+    <style>
+        .layui-form-checkbox[lay-skin=primary] span {
+            padding-left: 18px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+            overflow: visible;
+            text-overflow: inherit;
+            white-space: normal;
+        }
+
+        .layui-table td, .layui-table th {
+            min-width: 60px;
+        }
+    </style>
+    <link href="~/Content/lib/formSelects/formSelects-v4.css" rel="stylesheet" />
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="Dname" class="layui-form-label">
+                    <span class="x-red">*</span>名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Dname" name="Dname" lay-verify="required|Dname"
+                           autocomplete="off" class="layui-input" value="@Model.Dname">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般不要超过10个汉字
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Dcode" class="layui-form-label">
+                    <span class="x-red">*</span>代码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Dcode" name="Dcode" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input" value="@Model.Dcode">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    字典能唯一标识
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    父级
+                </label>
+
+                <div class="layui-input-inline">
+
+                    <select name="Parentcode" xm-select="selectdict" xm-select-search="" xm-select-radio=""></select>
+
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    字典父级
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Dseq" class="layui-form-label">
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Dseq" name="Dseq" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Dseq">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于调整显示顺序
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="isvisible" class="layui-form-label">
+                    是否可见
+                </label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isenable" value="0" title="禁用" @(!Model.Isenable ? "checked" : "")>
+                    <input type="radio" name="isenable" value="1" title="可用" @(Model.Isenable ? "checked" : "")>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Dseq" class="layui-form-label">
+                    自定义类型
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Dictype" name="Dictype" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Dictype">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于自定义类型
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    备注
+                </label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入备注" class="layui-textarea">@Model.Remark</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+            <input type="hidden" name="id" value="@Model.Id" />
+        </form>
+    </div>
+</div>
+
+<script>
+  
+    layui.config({
+        base: '/Content/lib/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4'
+    }).use(['form', 'layer','formSelects'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        var formSelects = layui.formSelects;
+        //自定义验证规则
+        form.verify({
+            Orgname: function (value) {
+                if (lscom.strlength(value) > 30) {
+                    return '超过30个字符限制';
+                }
+            }
+        });
+       
+        formSelects.data('selectdict', 'server', {
+            type: 'get',    
+            searchUrl: '/System/Dictionary/GetDictionaryCondition',
+            delay: 500,
+            searchName: 'keyword',
+            searchType: "title",
+            success: function (id, url, searchVal, result) {
+                formSelects.value('selectdict', ["@Model.Parentcode"]);
+                formSelects.btns('selectdict', ['select', 'remove'], {show: 'icon'});
+            }
+
+        });
+        
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+               
+                lscom.Ajax({
+                    url: "/Dictionary/SaveDictionary",
+                    data: $(data.form).serialize(),
+                    success: function (data) {
+                         lscom.successCallback(layer,data,true);
+                       
+                    }
+                });
+                return false;
+            });
+        
+    });</script>

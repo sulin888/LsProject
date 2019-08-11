@@ -1,0 +1,102 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统管理", ThreeTitle = "菜单管理" });
+}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-header">
+                    <div class="layui-row layui-form">
+                        <div class="layui-col-md9">
+                            <div class="layui-inline">
+                                <select name="logtype">
+                                    <option value="">全部类型</option>
+                                    <option value="1">信息</option>
+                                    <option value="2">错误</option>
+                                    <option value="3">提醒</option>
+                                    <option value="4">调试</option>
+                                </select>
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="logsource" id="logsource" placeholder="来源" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline">
+                                <input type="text" name="logmsg" id="logmsg" placeholder="消息" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" id="createtime" placeholder="日期" style="width:200px;">
+                                </div>
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="syslogslist" lay-filter="syslogslist"></table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="LogtypeTpl">
+    {{#  if(d.Logtype ==0){ }}
+    <span class="layui-badge layui-bg-green">信息</span>
+    {{#  } else if(d.Logtype ==1) { }}
+    <span class="layui-badge">错误</span>
+    {{#  }else if(d.Logtype ==2) { }}
+    <span class="layui-badge layui-bg-orange">提醒</span>
+    {{# }else if(d.Logtype ==3) { }}
+    <span class="layui-badge layui-bg-blue">调试</span>
+    {{# } }}
+
+</script>
+<script>
+    layui.use(['table', 'form', 'laydate'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        // 渲染表格
+        layer.load(2);
+        table.render({
+            elem: '#syslogslist',
+            id: "syslogslist_data",
+            url: '/System/Logs/GetAllLogs',
+            page: false,
+            cols: [[
+                { field: 'Logtype', width: '10%', title: '日志类型', templet: "#LogtypeTpl" },
+                { field: 'Logsource', width: '10%', title: '来源' },
+                { field: 'Logmsg', title: '消息' },
+                { field: 'Createtime', width: '10%', title: '创建时间' },
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+        //日期范围
+        laydate.render({
+            elem: '#createtime'
+            , range: true
+        });
+
+        $('#sreach').on("click", function () {
+            table.reload('syslogslist_data', {
+                where: {
+                    'logsource': $("#logsource").val(),
+                    'logtype': $("#logtype").val(),
+                    'logmsg': $("#logmsg").val(),
+                    'createtime': $("#createtime").val()
+                }
+            });
+        });
+    });
+</script>

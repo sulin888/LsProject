@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统管理", ThreeTitle = "菜单管理" });
+}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-header">
+                    <div class="layui-row">
+                        <div class="layui-col-md9">
+                            <button class="layui-btn" id="btn-expand"><i class="layui-icon">&#xe61a;</i>全部展开</button>
+                            <button class="layui-btn" id="btn-fold"><i class="layui-icon">&#xe619;</i>全部折叠</button>
+                            <button class="layui-btn" onclick="xadmin.open('添加菜单','/System/Menu/CreateMenu',600,400)"><i class="layui-icon">&#xe608;</i>添加菜单</button>
+                            <button class="layui-btn" onclick="xadmin.open('添加功能','/System/Menu/CreateFunction',600,500)"><i class="layui-icon">&#xe608;</i>添加功能</button>
+                        </div>
+                        <div class="layui-col-md3" style="text-align:right;">
+                            <div class="layui-inline">
+                                <input type="text" name="menuname" id="menuname" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="sysmenulist" lay-filter="sysmenulist"></table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">新增下级</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var funcodearry = @Html.Raw(ViewBag.FunList);
+    layui.config({
+        base: '/Content/lib/treetable-lay/'
+    }).extend({
+        treetable: 'treetable'
+    }).use(['table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        var reload = function () {
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'id',
+                treePidName: 'pId',
+                elem: '#sysmenulist',
+                url: '/System/Menu/GetAllMenu?menuname=' + $("#menuname").val(),
+                page: false,
+                cols: [[
+
+                    { type: 'numbers', width: '5%' },
+                    { field: 'name', width: '20%', title: '菜单名称' },
+                    { field: 'menuCode', width: '15%', title: '菜单代码' },
+                    { field: 'url', width: '22%', title: '菜单地址' },
+                    {
+                        field: 'funcode', width: '25%', title: '所属功能', templet: function (d) {
+                            return getfun(d.funcode);
+                        }
+                    },
+                    { templet: '#auth-state', align: 'center', title: '操作' }
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+        // 渲染表格
+        layer.load(2);
+        reload();
+        //监听行工具事件
+        table.on('tool(sysmenulist)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'del') {
+                layer.confirm('确认删除行吗？', function (index) {
+                    //obj.del();
+                    lscom.Ajax({
+                        url: "/System/Menu/DelMenu",
+                        data: { id: data.id },
+                        success: function (data) {
+                             lscom.successSelfCallback(layer,data,reload);
+                          
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event == 'edit') {
+                xadmin.open('编辑菜单', '/System/Menu/EditMenu?id=' + data.id, 600, 500);
+            } else if (obj.event=="add") {
+                xadmin.open('新增菜单', '/System/Menu/CreateMenu?code=' + data.menuCode, 600, 500);
+            }
+        });
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#sysmenulist');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#sysmenulist');
+        });
+        $('#sreach').on("click", function () {
+            reload();
+        });
+
+        var getfun = function (fcode) {
+            var html = '';
+            for (var i = 0; i <funcodearry .length; i++) {
+                if (fcode.indexOf(funcodearry[i].Funcode) > -1) {
+                    html += '<span class="layui-badge-rim">'+funcodearry[i].Funname+'</span>&nbsp;';
+                }
+            }
+            return html;
+        }
+    });
+</script>

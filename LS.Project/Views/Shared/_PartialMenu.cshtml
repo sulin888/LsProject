@@ -1,0 +1,58 @@
+﻿<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+            @foreach (var item in ViewData["ParentMenu"] as List<LS.Project.Models.SysMenuModel>)
+            {
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont layui-icon left-nav-li @item.iconCls" lay-tips="@item.text"></i>
+                        <cite>@item.text</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    @if (item.children != null && item.children.Count > 0)
+                    {
+                        <ul class="sub-menu">
+                            @foreach (var ch in item.children)
+                            {
+                                if (ch.children != null && ch.children.Count > 0)
+                                {
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="iconfont layui-icon @ch.iconCls"></i>
+                                            <cite>@ch.text</cite>
+                                            <i class="iconfont nav_right">&#xe697;</i>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            @foreach (var three in ch.children)
+                                            {
+                                                <li>
+                                                    <a onclick="xadmin.add_tab('@three.text','@three.attributes.datalink')">
+                                                        <i class="iconfont layui-icon @three.iconCls"></i>
+                                                        <cite>@three.text</cite>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a onclick="xadmin.add_tab('@ch.text','@ch.attributes.datalink')">
+                                            <i class="iconfont layui-icon @ch.iconCls"></i>
+                                            <cite>@ch.text</cite>
+                                        </a>
+                                    </li>
+                                }
+
+                            }
+
+                        </ul>
+                    }
+
+
+                </li>
+            }
+        </ul>
+    </div>
+</div>

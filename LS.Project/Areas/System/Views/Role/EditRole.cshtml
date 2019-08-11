@@ -1,0 +1,192 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section styles{
+    <style>
+        .layui-form-checkbox[lay-skin=primary] span {
+            padding-left: 18px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+            overflow: visible;
+            text-overflow: inherit;
+            white-space: normal;
+        }
+
+        .layui-table td, .layui-table th {
+            min-width: 60px;
+        }
+    </style>
+
+}
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="Rolename" class="layui-form-label">
+                    <span class="x-red">*</span>名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Rolename" name="Rolename" lay-verify="required|Rolename"
+                           autocomplete="off" class="layui-input" value="@Model.Rolename">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般不要超过10个汉字
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Rolecode" class="layui-form-label">
+                    <span class="x-red">*</span>代码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Rolecode" name="Rolecode" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input" value="@Model.Rolecode">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    角色功能唯一标识
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="Roleseq" class="layui-form-label">
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="Roleseq" name="Roleseq" required=""
+                           autocomplete="off" class="layui-input" value="@Model.Roleseq">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    一般用于调整显示顺序
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    授权菜单
+                </label>
+
+                <div class="layui-input-block">
+
+                    <table class="layui-hide" id="sysmenulist" lay-filter="sysmenulist"></table>
+
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="remark" class="layui-form-label">
+                    备注
+                </label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入备注" class="layui-textarea">@Model.Remark</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
+            <input type="hidden" name="id" value="@Model.Id" />
+        </form>
+    </div>
+</div>
+
+<script>
+      var funcodearry = @Html.Raw(ViewBag.MenuFunList);
+    layui.config({
+        base: '/Content/lib/treetable-lay/'
+    }).extend({
+        treetable: 'treetable'
+    }).use(['form', 'layer', 'table', 'treetable'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        //自定义验证规则
+        form.verify({
+            Rolename: function (value) {
+                if (lscom.strlength(value) > 20) {
+                    return '超过20个字符限制';
+                }
+            }
+        });
+       
+       treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'id',
+                treePidName: 'pId',
+                elem: '#sysmenulist',
+                url: '/System/Role/GetRoleAllMenu?roleCode=@Model.Rolecode',
+               page: false,
+           cols: [[
+               {
+                   type: 'funcode', width: 60,title:'<input type="checkbox" id="chk-all"  lay-filter="chk-all"  lay-skin="primary"   />', templet: function (d) {
+                       return '<input type="checkbox" name="menucode" value="' + d.menuCode + '"  lay-skin="primary"   '+(d.checked?"checked":"")+' />';
+                   }
+               },
+                    { field: 'name',  width: 200, title: '菜单名称' },
+                    {field: 'funcode', width: 350,title: '所属功能', templet: function (d) {
+                            return getfun(d.funcode,d.menuCode,d.rolefuncode);
+
+                        }
+                    }
+                ]],
+           done: function () {
+               if ($("input[name='menucode']").length == $("input[name='menucode']:checked").length) {
+                   $("#chk-all").next().click();
+                   form.render("checkbox", "chk-all");
+               }
+               layer.closeAll('loading');
+           }
+            });
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+                lscom.Ajax({
+                    url: "/Role/SaveRoleMenu",
+                    data: $(data.form).serialize(),
+                    success: function (data) {
+                        lscom.successCallback(layer,data,true);
+                    }
+                });
+                return false;
+            });
+
+        form.on('checkbox(chk-all)', function (data) {
+            $("input[name='menucode']").prop("checked", data.elem.checked);
+              form.render("checkbox");
+});
+        form.on('checkbox(chk-item)', function (data) {
+            var ids = data.elem.attributes.id.nodeValue.split('-');
+            if (data.elem.checked && ids[1] != "Select") {
+                if (!$("#" + ids[0] + "-Select").prop("checked")) {
+                    $("#" + ids[0] + "-Select").next().click();
+                }
+            } else {
+                if (!data.elem.checked && ids[1] == "Select") {
+                    $(data.elem).siblings('input').each(function () {
+                        if ($(this).prop("checked")) {
+                            $(this).next().click();
+                        }
+                    });
+                }
+            }
+        });
+         var getfun = function (fcode,mencode,rolefuncode) {
+            var html = '';
+            for (var i = 0; i <funcodearry .length; i++) {
+                if (fcode.indexOf(funcodearry[i].Funcode) > -1) {
+                    var checked = "";
+                    if (rolefuncode != undefined && rolefuncode.indexOf(funcodearry[i].Funcode) > -1) {
+                        checked = "checked";
+                    }
+  
+                    html += '<input type="checkbox" id="'+mencode+'-'+funcodearry[i].Funcode+'" name="funcode"  value="'+mencode+'-'+funcodearry[i].Funcode+'" lay-filter="chk-item" lay-skin="primary" title="'+funcodearry[i].Funname+'" '+checked+' />';
+                }
+            }
+            return html;
+        }
+    });</script>

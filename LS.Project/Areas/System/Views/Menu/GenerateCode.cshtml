@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    Html.RenderPartial("_PartialNav", new LS.Project.Areas.System.Models.NavModel { NavTitle = "首页", NavSubTitle = "系统帮助", ThreeTitle = "代码生成实例" });
+}
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <pre class="layui-code">
+                    //生成Model 格式
+                    exec  p_getModel 'Mssql表名','表名+Entity','说明描述'
+                    //如下实例
+                    exec  p_getModel 'sys_function','SysFunctionEntity','功能项管理'
+
+                    //生成IService 格式
+                    exec  p_getcoreI 'Model名称不需要Entity','说明描述'
+                    //如下实例
+                    exec  p_getcoreI 'SysFunction','功能项管理'
+
+                    //生成Service 格式
+                    exec  p_getcoreS 'Mssql表名','Model名称不需要Entity','说明描述'
+                    //如下实例
+                    exec [p_getcoreS] 'sys_function','SysFunction','功能项管理'
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+      layui.use(['code'], function () {
+        layui.code({
+             about:false
+        });
+    });
+</script>
+
